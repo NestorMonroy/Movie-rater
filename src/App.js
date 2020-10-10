@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import MovieList from './components/movie-list';
 import MovieDetails from './components/movie-details';
 import MovieForm from './components/movie-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilm } from '@fortawesome/free-solid-svg-icons'
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faFilm, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { useCookies } from 'react-cookie';
-//import { useFetch } from './hooks/useFetch';
+import { useFetch } from './hooks/useFetch';
 
 function App() {
 
-  const [movies, setMovies] = useState([]);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [editedMovie, setEditedMovie] = useState(null);
-  const [token, deleteToken] = useCookies(['movie-token']);
+  const [movies, setMovies] = React.useState([]);
+  const [selectedMovie, setSelectedMovie] = React.useState(null);
+  const [editedMovie, setEditedMovie] = React.useState(null);
+  const [token, setToken, deleteToken] = useCookies(['movie-token']);
+  const [data, loading, error] = useFetch();
 
-  //const [data, loading, error] = useFetch();
-
-/*   useEffect(()=>{
+  React.useEffect(()=>{
     setMovies(data);
   }, [data])
- */
-  useEffect( () => {
+
+  React.useEffect( () => {
     if(!token['movie-token']) window.location.href = '/';
   }, [token])
 
@@ -61,9 +59,9 @@ function App() {
     deleteToken(['movie-token']);
 }
 
-  /* if(loading) return <h1>Loading...</h1>
-  if(error) return <h1>Error loading movies</h1> */
-
+  if(loading) return <h1>Loading...</h1>
+  if(error) return <h1>Error loading movies</h1>
+  
   return (
     <div className="App">
       <header className="App-header">
