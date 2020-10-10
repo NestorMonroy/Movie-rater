@@ -1,39 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import MovieList from './components/movie-list';
 import MovieDetails from './components/movie-details';
 import MovieForm from './components/movie-form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilm } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { useCookies } from 'react-cookie';
+//import { useFetch } from './hooks/useFetch';
 
 function App() {
 
-  const [movies, setMovies] = React.useState([]);
-  const [selectedMovie, setSelectedMovie] = React.useState(null);
-  const [editedMovie, setEditedMovie] = React.useState(null);
+  const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [editedMovie, setEditedMovie] = useState(null);
+  const [token, deleteToken] = useCookies(['movie-token']);
 
+  //const [data, loading, error] = useFetch();
 
-  React.useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/movies/", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Token 8b6605324d5c4a8ed28d4cd87fb264f11abbec5d'
-      }
-    })
-    .then(resp => resp.json())
-    .then(resp => setMovies(resp))
-    .catch(err => console.log(err))
-  }, [] )
+/*   useEffect(()=>{
+    setMovies(data);
+  }, [data])
+ */
+  useEffect( () => {
+    if(!token['movie-token']) window.location.href = '/';
+  }, [token])
 
   const loadMovie = movie => {
     setSelectedMovie(movie);
     setEditedMovie(null);
   }
-
   const editClicked = movie => {
     setEditedMovie(movie);
     setSelectedMovie(null);
   }
-
   const udpatedMovie = movie => {
     const newMovies = movies.map( mov => {
       if (mov.id === movie.id) {
@@ -43,50 +43,52 @@ function App() {
     })
     setMovies(newMovies)
   }
-
-
   const newMovie = () => {
-    setEditedMovie({title:'', description:''});
+    setEditedMovie({title: '', description: ''});
     setSelectedMovie(null);
-
   }
-
-
+  
   const movieCreated = movie => {
     const newMovies = [...movies, movie];
-    setMovies(newMovies)
-
+    setMovies(newMovies);
   }
-
   const removeClicked = movie => {
     const newMovies = movies.filter( mov => mov.id !== movie.id);
     setMovies(newMovies);
   }
 
+  const logoutUser = () => {
+    deleteToken(['movie-token']);
+}
+
+  /* if(loading) return <h1>Loading...</h1>
+  if(error) return <h1>Error loading movies</h1> */
 
   return (
     <div className="App">
       <header className="App-header">
-        Movie Rater
+        <h1>
+          <FontAwesomeIcon icon={faFilm}/>
+          <span>Movie rater</span>
+       </h1>
+       <FontAwesomeIcon icon={faSignOutAlt} onClick={logoutUser}/>
       </header>
       <div className="layout">
-        <div>
-          <MovieList 
-            movies={movies} 
-            movieClicked={loadMovie} 
-            editClicked={editClicked} 
-
-          />
-          <button onClick={newMovie} >New movie</button>
+          <div>
+            <MovieList
+              movies={movies}
+              movieClicked={loadMovie}
+              editClicked={editClicked}
+              removeClicked={removeClicked}
+            />
+            <button onClick={newMovie}>New movie</button>
+          </div>
+          <MovieDetails movie={selectedMovie} updateMovie={loadMovie}/>
+          { editedMovie ? 
+          <MovieForm movie={editedMovie} udpatedMovie={udpatedMovie} movieCreated={movieCreated}/> 
+          : null}
+          
         </div>
-        <MovieDetails movie={selectedMovie} updateMovie={loadMovie} />  
-
-        { editedMovie ? 
-          <MovieForm movie={editedMovie} udpatedMovie={udpatedMovie} movieCreate={movieCreated}  removeClicked={removeClicked} />
-        :  null}
-
-      </div>
-
     </div>
   );
 }

@@ -43,14 +43,14 @@ button:disabled {
 }
 
 .color1 {
-  color: rgb(74, 158, 32);
+  color: #2b724e;
 }
 .color2 {
-  color: rgb(15, 107, 46);
+  color: #082114;
 }
 .rate-container {
   margin-top: 20px;
-  border-top: 2px solid purple;
+  border-top: 2px solid rgb(87, 77, 87);
 }
 .rate-container .fa-star {
   font-size: 1.8rem;
@@ -68,7 +68,7 @@ button:disabled {
   color: crimson;
 }
 h1 {
-  color: orange;
+  color:  #4c8c6c;
 }
 h1 .fa-film {
   color: white;
